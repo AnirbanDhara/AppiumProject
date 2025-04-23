@@ -10,35 +10,28 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 
-public class SwipeDemo extends BaseTest{
+public class DragDropDemo extends BaseTest{
     @Test
-    public void testSwipeDemo() throws InterruptedException {
+    public void testDragAndDropDemo() throws InterruptedException {
         WebElement views = driver.findElement(AppiumBy.accessibilityId("Views"));
         views.click();
 
-        WebElement gallery = driver.findElement(AppiumBy.accessibilityId("Gallery"));
-        gallery.click();
+        WebElement dragAndDrop = driver.findElement(AppiumBy.accessibilityId("Drag and Drop"));
+        dragAndDrop.click();
 
-        WebElement photos = driver.findElement(By.xpath("//android.widget.TextView[@content-desc='1. Photos']"));
-        photos.click();
+        WebElement source = driver.findElement(By.id("io.appium.android.apis:id/drag_dot_1"));
 
-        // Before Swipe, first image is in focus
-        WebElement image_1 = driver.findElement(By.xpath("//android.widget.Gallery[@resource-id='io.appium.android.apis:id/gallery']/android.widget.ImageView[1]"));
-       Assert.assertEquals(new String(image_1.getAttribute("focusable")),"true");
-//
-        WebElement image_2 = driver.findElement(By.xpath("//android.widget.Gallery[@resource-id='io.appium.android.apis:id/gallery']/android.widget.ImageView[2]"));
-        Assert.assertEquals(new String(image_2.getAttribute("focusable")),"false");
+        // Java
+        ((JavascriptExecutor) driver).executeScript("mobile: dragGesture", ImmutableMap.of(
+                "elementId", ((RemoteWebElement) source).getId(),
+                "endX", 618,
+                "endY", 554
+        ));
 
-        WebElement image_3 = driver.findElement(By.xpath("//android.widget.Gallery[@resource-id='io.appium.android.apis:id/gallery']/android.widget.ImageView[3]"));
-        Assert.assertEquals(new String(image_3.getAttribute("focusable")),"false");
+        Thread.sleep(2000);
 
-        // After Swipe, second image is in focus
-       swipeAction(image_1, "left");
-       //swipeAction(image_2,"left");
+        String result = driver.findElement(By.id("io.appium.android.apis:id/drag_result_text")).getText();
 
-        Assert.assertEquals(new String(image_1.getAttribute("focusable")),"false");
-//        Assert.assertEquals(new String(image_2.getAttribute("focusable")),"false");
-//        Assert.assertEquals(new String(image_3.getAttribute("focusable")),"true");
-
+        Assert.assertEquals(result,"Dropped!");
     }
 }

@@ -1,52 +1,65 @@
 package com.anirbandhara;
 
 
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.options.UiAutomator2Options;
-import io.appium.java_client.service.local.AppiumDriverLocalService;
-import io.appium.java_client.service.local.AppiumServiceBuilder;
+import io.appium.java_client.AppiumBy;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
 
-public class AppiumBasics {
+
+public class AppiumBasics extends BaseTest{
 
     @Test
-    public void appiumBasicsTest() throws MalformedURLException, InterruptedException {
+    public void testWifiSettingsName() throws MalformedURLException, InterruptedException {
 
-        // Code to start appium server automatically
-        AppiumDriverLocalService serviceBuilder = new AppiumServiceBuilder()
-                .withAppiumJS(new File("C://usr//npm//node_modules//appium//build//lib//main.js"))
-                .withIPAddress("127.0.0.1")
-                .usingPort(4723).build();
-        serviceBuilder.start();
-
-        // Set capabilities for Android emulator and API Demos app
-        UiAutomator2Options options = new UiAutomator2Options()
-                .setPlatformName("Android")
-                .setDeviceName("emulator-5554") // or your emulator name from `adb devices`
-                .setApp("C://Users//Anirban//Documents//UIAutomation//AppiumProject//src//test//resources//ApiDemos-debug.apk")
-                .setAutomationName("UiAutomator2");
-
-        // Connect to Appium server
-        URL appiumServerUrl = new URL("http://127.0.0.1:4723");
-
-        // Launch the API Demos app
-        AndroidDriver driver = new AndroidDriver(appiumServerUrl, options);
+       // Starting App
+        //configureAppium();
         System.out.println("API Demos app launched successfully!");
 
         // Optional: wait or perform actions
         Thread.sleep(5000);
 
         // Actual Automation Code
+        //Xpath, id, classname ( Selenium 'By' class) || accessibilityId, androidUIAutomator ( 'AppiumBy' class)
+        WebElement preference_element = driver.findElement(AppiumBy.accessibilityId("Preference"));
+        preference_element.click();
 
-        // To quit the session
-        driver.quit();
-        serviceBuilder.close();
+        WebElement pref_depend = driver.findElement(By.xpath("//android.widget.TextView[@content-desc='3. Preference dependencies']"));
+        pref_depend.click();
 
+        WebElement wifi_checkbox = driver.findElement(AppiumBy.className("android.widget.CheckBox"));
+        wifi_checkbox.click();
 
+        WebElement wifi_settings = driver.findElement(By.xpath("//android.widget.ListView[@resource-id='android:id/list']/android.widget.LinearLayout[2]/android.widget.RelativeLayout"));
+        Assert.assertTrue(wifi_settings.isEnabled());
+
+        wifi_settings.click();
+
+        Thread.sleep(2000);
+
+        // Widget is visible, cancel button is present, widget title is 'Wifi settings'
+        WebElement wifi_settings_widget = driver.findElement(By.xpath("/hierarchy/android.widget.FrameLayout"));
+        Assert.assertTrue(wifi_settings_widget.isDisplayed());
+
+        WebElement wifi_title = driver.findElement(By.id("android:id/alertTitle"));
+        String alert_title = wifi_title.getText();
+        Assert.assertEquals(alert_title, "WiFi settings");
+
+        WebElement cancel_btn = driver.findElement(By.id("android:id/button2"));
+        Assert.assertTrue(cancel_btn.isDisplayed());
+
+        // wifi name is set
+        WebElement wifi_textbox = driver.findElement(AppiumBy.className("android.widget.EditText"));
+        wifi_textbox.sendKeys("Anirban Wifi");
+
+        Thread.sleep(2000);
+
+        //cancel button is clicked
+        cancel_btn.click();
+
+        System.out.println("cancel button clicked");
 
     }
 }
