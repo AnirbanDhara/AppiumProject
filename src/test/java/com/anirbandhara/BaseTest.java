@@ -91,7 +91,11 @@ public class BaseTest {
         ));
     }
 
-
+    public void startActivityAction(String appPackage, String appActivity)
+    {
+        ((JavascriptExecutor)driver).executeScript("mobile: startActivity",
+                ImmutableMap.of("intent",appPackage+"/"+appActivity));
+    }
     @AfterClass
     public void tearDown()
     {

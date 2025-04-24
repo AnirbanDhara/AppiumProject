@@ -25,8 +25,7 @@ public class AppActivityAppPackage extends BaseTest{
 
 
         Activity activity = new Activity("io.appium.android.apis","io.appium.android.apis.preference.PreferenceDependencies");
-        ((JavascriptExecutor)driver).executeScript("mobile: startActivity",
-                ImmutableMap.of("intent","io.appium.android.apis/io.appium.android.apis.preference.PreferenceDependencies"));
+        startActivityAction("io.appium.android.apis","io.appium.android.apis.preference.PreferenceDependencies");
 
         WebElement wifi_checkbox = driver.findElement(AppiumBy.className("android.widget.CheckBox"));
         wifi_checkbox.click();
